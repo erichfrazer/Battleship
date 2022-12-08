@@ -65,7 +65,7 @@ int main()
 				goto repeat;
 			}
 			PlaceBoatInGrid(pMyGrid, &bt);
-			MyBoats[i] = bt;
+			pMyGrid->m_Boats[i] = bt;
 		}
 	}
 
@@ -104,7 +104,7 @@ int main()
 				goto repeat2;
 			}
 			PlaceBoatInGrid(pCompGrid, &bt);
-			ComputersBoats[i] = bt;
+			pCompGrid->m_Boats[i] = bt;
 		}
 	}
 
@@ -164,15 +164,15 @@ int main()
 			SetGridDataAtXY(pCompGrid, x, y, boatIndex, true);
 
 			// see if the entire boat is hit
-			int nWhichBoatSunkIndex = IsEntireBoatSunk(pCompGrid, ComputersBoats, x, y);
+			int nWhichBoatSunkIndex = IsEntireBoatSunkAtXY(pCompGrid, x, y);
 			if (nWhichBoatSunkIndex > NO_BOAT)
 			{
 				printf("You sunk his battleship! You sunk boat # %d\n", nWhichBoatSunkIndex);
-				ComputersBoats[nWhichBoatSunkIndex].sunk = true;
+				pCompGrid->m_Boats[nWhichBoatSunkIndex].sunk = true;
 				bool bAllSunk = true;
 				for (int i = 0; i < 5; i++)
 				{
-					if (!ComputersBoats[i].sunk)
+					if (!pCompGrid->m_Boats[i].sunk)
 					{
 						bAllSunk = false;
 						break;
@@ -195,7 +195,7 @@ int main()
 
 		int hx, hy;
 		int Direc[4];
-		FindAnyNonSunkHitInGrid(pMyGrid, MyBoats, &hx, &hy, Direc);
+		FindAnyNonSunkHitInGrid(pMyGrid, &hx, &hy, Direc);
 		if (hx != -1)
 		{
 			// what's the max len of Direc?
@@ -223,8 +223,8 @@ int main()
 			// no idea where to look, try a random spot with given radius of free space
 			while (searchLen > 0)
 			{
-				FindUnguessedRegion(pMyGrid, &guessX, &guessY, searchLen);
-				if (guessX == -1)
+				bool FoundSpot = FindUnguessedSpotWithinSquareLen(pMyGrid, &guessX, &guessY, searchLen);
+				if (!FoundSpot)
 				{
 					searchLen--;
 					printf("Debug: computer couldn't find an unguessed region, search len is now %d\n", searchLen);
@@ -275,7 +275,7 @@ int main()
 			lastComputerMoveWasHit = true;
 		}
 
-		int boatsunk = IsEntireBoatSunk(pMyGrid, MyBoats, guessX, guessY);
+		int boatsunk = IsEntireBoatSunkAtXY(pMyGrid, MyBoats, guessX, guessY);
 		if (boatsunk > NO_BOAT)
 		{
 			KnownHitX = -1;
@@ -290,7 +290,7 @@ int main()
 			bool allSunk = true;
 			for (int i = 0; i < 5; i++)
 			{
-				if (!MyBoats[i].sunk)
+				if (!pMyGrid->m_Boats[i].sunk)
 				{
 					allSunk = false;
 					break;

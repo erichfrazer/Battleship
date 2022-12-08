@@ -67,7 +67,7 @@ void SetGridDataAtXY(struct Grid* pGrid, int x, int y, int boat, bool guessed)
 	pGridData->guessed = guessed;
 }
 
-void FindAnyNonSunkHitInGrid(struct Grid* pGrid, struct BoatInfo* pBoats, int* pX, int* pY, int Direc[])
+void FindAnyNonSunkHitInGrid(struct Grid* pGrid, int* pX, int* pY, int Direc[])
 {
 	*pX = -1;
 	*pY = -1;
@@ -82,7 +82,7 @@ void FindAnyNonSunkHitInGrid(struct Grid* pGrid, struct BoatInfo* pBoats, int* p
 		for (int sy = 0; sy < GridHeight; sy++)
 		{
 			struct GridData* pXY = GridDataAtXY(pGrid, sx, sy);
-			if (pXY->guessed && (pXY->boatIndex > NO_BOAT) && !MyBoats[pXY->boatIndex].sunk)
+			if (pXY->guessed && (pXY->boatIndex > NO_BOAT) && !pGrid->m_Boats[pXY->boatIndex].sunk)
 			{
 				for (int i = 0; i < 4; i++)
 				{

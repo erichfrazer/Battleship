@@ -10,21 +10,23 @@ bool AnyUntriedPathsAroundUs(struct Grid* pGrid, int x, int y)
 	return b;
 }
 
-bool HasAnyInProximityBeenGuessed(struct Grid* pGrid, int x, int y, int len)
+bool HasAnythingInSquareBlockBeenGuessed(struct Grid* pGrid, int x, int y, int len)
 {
+	// the incoming XY refers to the "middle" of the square, so subtract off 1/2 for both to find the upper left corner
 	x -= len / 2;
 	y -= len / 2;
+
 	for (int i = 0; i < len; i++)
 	{
 		for (int j = 0; j < len; j++)
 		{
-			int sx = x + i;
-			int sy = y + j;
-			if (sx < 0 || sy < 0 || sx >= GridWidth || sy >= GridHeight)
+			int testx = x + i;
+			int testy = y + j;
+			if (testx < 0 || testy < 0 || testx >= GridWidth || testy >= GridHeight)
 			{
 				continue;
 			}
-			bool bGuessed = IsGridGuessedAtXY(pGrid, sx, sy);
+			bool bGuessed = IsGridGuessedAtXY(pGrid, testx, testy);
 			if (bGuessed)
 			{
 				return true;
@@ -34,23 +36,26 @@ bool HasAnyInProximityBeenGuessed(struct Grid* pGrid, int x, int y, int len)
 	return false;
 }
 
-void FindUnguessedRegion(struct Grid* pGrid, int* px, int* py, int len)
+bool FindUnguessedSpotWithinSquareLen(struct Grid* pGrid, int* px, int* py, int len)
 {
 	for (int i = 0; i < 10000; i++)
 	{
 		int rx = rand() % GridWidth;
 		int ry = rand() % GridHeight;
-		bool bIsPop = HasAnyInProximityBeenGuessed(pGrid, rx, ry, len);
-		if (bIsPop)
+		bool HasBeenGuessed = HasAnythingInSquareBlockBeenGuessed(pGrid, rx, ry, len);
+		if (HasBeenGuessed)
 		{
 			continue;
 		}
 		*px = rx;
 		*py = ry;
-		return;
+		return true;
 	}
+
+	// couldn't find an unguessed spot. return -1,-1
 	*px = -1;
 	*py = -1;
+	return false;
 }
 
 bool IsSpaceForBoat(struct Grid* pGrid, struct BoatInfo* b)
@@ -83,15 +88,15 @@ bool IsSpaceForBoat(struct Grid* pGrid, struct BoatInfo* b)
 	return true;
 }
 
-int IsEntireBoatSunk(struct Grid* pGrid, struct BoatInfo* pBoats, int x, int y)
+int IsEntireBoatSunkAtXY(struct Grid* pGrid, int x, int y)
 {
 	int boat = GetGridBoatAtXY(pGrid, x, y);
 	if (boat == NO_BOAT) return NO_BOAT;
 
-	int bx = pBoats[boat].x;
-	int by = pBoats[boat].y;
-	bool bHorz = pBoats[boat].isHorz;
-	int len = pBoats[boat].len;
+	int bx = pGrid->m_Boats[boat].x;
+	int by = pGrid->m_Boats[boat].y;
+	bool bHorz = pGrid->m_Boats[boat].isHorz;
+	int len = pGrid->m_Boats[boat].len;
 	int ix = 0;
 	int iy = 0;
 	if (bHorz)
@@ -190,7 +195,7 @@ void PrintGrid(struct Grid* pMyGrid, struct Grid* pOpponentGrid)
 			int boat;
 			bool bGuessed;
 			GetGridDataAtXY(pMyGrid, x, y, &boat, &bGuessed);
-			bool bSunk = IsEntireBoatSunk(pMyGrid, MyBoats, x, y) != NO_BOAT;
+			bool bSunk = IsEntireBoatSunkAtXY(pMyGrid, x, y) != NO_BOAT;
 
 			switch (boat)
 			{
@@ -292,7 +297,7 @@ void PrintGrid(struct Grid* pMyGrid, struct Grid* pOpponentGrid)
 			int boat;
 			bool bGuessed;
 			GetGridDataAtXY(pOpponentGrid, x, y, &boat, &bGuessed);
-			bool bSunk = IsEntireBoatSunk(pOpponentGrid, ComputersBoats, x, y) != NO_BOAT;
+			bool bSunk = IsEntireBoatSunkAtXY(pOpponentGrid, x, y) != NO_BOAT;
 
 			// if we don't want to reveal the computer's boats, then if we havent' guessed
 			// the spot yet, then don't show what boat type it is, pretend it's "no boat".

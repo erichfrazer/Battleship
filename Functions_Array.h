@@ -20,9 +20,20 @@ struct GridData
 	bool guessed;
 } GridPoint;
 
+struct BoatInfo
+{
+	int index; // which index in the array is it
+	int x;
+	int y;
+	int len;
+	int isHorz;
+	int sunk;
+};
+
 struct Grid
 {
 	struct GridData* m_pArray;
+	struct BoatInfo m_Boats[BoatCount];
 };
 
 struct Grid* CreateGrid();

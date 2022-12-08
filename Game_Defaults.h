@@ -10,7 +10,7 @@
 
 static const int GridWidth = 10;
 static const int GridHeight = 10;
-static const int BoatCount = 5;
+#define BoatCount 5
 static int BoatLengthArray[] = { 2, 2, 3, 4, 5 };
 // this is just to tell the user what direction it's looking in, a description string!
 static const char* DirectionString[] = { "N", "E", "S", "W" };
@@ -22,18 +22,5 @@ static const int StepOffsetX[] = { 0, 1, 0, -1 }; // direction order is N,E,S,W
 static const int StepOffsetY[] = { -1, 0, 1, 0 };
 
 #define NO_BOAT -1
-
-struct BoatInfo
-{
-	int index; // which index in the array is it
-	int x;
-	int y;
-	int len;
-	int isHorz;
-	int sunk;
-};
-
-struct BoatInfo MyBoats[5];
-struct BoatInfo ComputersBoats[5];
 
 #endif

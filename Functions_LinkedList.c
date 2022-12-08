@@ -94,7 +94,7 @@ void SetOrAddGrid(Grid** ppGrid, int x, int y, int boat, bool guessed)
 	*ppGrid = pNewGrid;
 }
 
-void FindAnyNonSunkHitInGrid(Grid* pGrid, Boat* pBoats, int* pX, int* pY, int Direc[])
+void FindAnyNonSunkHitInGrid(Grid* pGrid, BoatInfo* pBoats, int* pX, int* pY, int Direc[])
 {
 	*pX = -1;
 	*pY = -1;

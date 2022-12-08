@@ -11,11 +11,12 @@
 #include "Functions_Array.h"
 
 bool AnyUntriedPathsAroundUs(struct Grid* pGrid, int x, int y);
-bool HasAnyInProximityBeenGuessed(struct Grid* pGrid, int x, int y, int len);
-void FindUnguessedRegion(struct Grid* pGrid, int* px, int* py, int len);
-bool IsSpaceForBoat(struct Grid* pGrid, struct BoatInfo* b);
-int IsEntireBoatSunk(struct Grid* pGrid, struct BoatInfo* pBoats, int x, int y);
-void PlaceBoatInGrid(struct Grid* pGrid, struct BoatInfo* b);
-void PrintGrid(struct Grid* pMyGrid, struct Grid* pOpponentGrid);
+bool HasAnythingInSquareBlockBeenGuessed(struct Grid* pGrid, int x, int y, int len);
+bool FindUnguessedSpotWithinSquareLen(struct Grid* pGrid, int* px, int* py, int len);
+bool IsSpaceForBoat(struct Grid* pGrid, struct BoatInfo* ProposedBoat);
+// returns WHICH boat. returns NO_BOAT if boat is not sunk at that point
+int IsEntireBoatSunkAtXY(struct Grid* pGrid, int x, int y);
+void PlaceBoatInGrid(struct Grid* pGrid, struct BoatInfo* NewBoat);
+void PrintGrid(struct Grid* pGrid, struct Grid* pOpponentGrid);
 
 #endif
